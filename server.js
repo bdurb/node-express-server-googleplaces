@@ -1,5 +1,5 @@
 
-const config = require('./config');
+const config = require('./config.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
@@ -21,11 +21,11 @@ server.get('/place', (req, res) => {
     .then(place => place.json())
     .then(place => {
       res.status(STATUS_SUCCESS);
-      res.send(place)
+      res.send(place);
     })
     .catch(err => {
       res.status(USER_ERROR);
-      res.send({ err: err })
+      res.send({err: err})
     });
 });
 
