@@ -8,19 +8,24 @@ const fetch = require('node-fetch');
 const server = express();
 const PORT = config.port;
 const USER_ERROR = 422;
+const STATUS_SUCCESS = 200;
+const KEY_GMAPS = config.gmaps.apiKey;
+const URI_TEXT_SEARCH = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=';
 
 server.use(bodyParser.json());
 
-server.post('/places', (req, res) => {
-  const place = req.body.place;
-  if (!place) {
-    res.send(USER_ERROR);
-    res.json({ error: 'You must provide a place' });
-  }
-  let data = fetch(`https://maps.googleapis.com/maps/api/place/textsearch/xml?query=${place}&key=${config.gmaps.apiKey}`,{ method: 'POST'})
-    .then(res => res.json(data))
-    .then(json => {
-      res.status(200).json(first)
+server.get('/place', (req, res) => {
+  const query = req.query.query;
+  const url = URI_TEXT_SEARCH + query + '&key=' + KEY_GMAPS;
+  fetch(url)
+    .then(place => place.json())
+    .then(place => {
+      res.status(STATUS_SUCCESS);
+      res.send(place)
+    })
+    .catch(err => {
+      res.status(USER_ERROR);
+      res.send({ err: err })
     });
 });
 
